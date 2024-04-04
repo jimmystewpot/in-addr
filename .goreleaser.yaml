@@ -50,3 +50,7 @@ checksum:
   disable: false
   extra_files:
     - glob: LICENSE
+
+release:
+  mode: append
+  skip_upload: false
