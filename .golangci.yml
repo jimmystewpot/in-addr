@@ -127,4 +127,4 @@ issues:
         - lll # long lines; test strings, bytes etc.
         - scopelint # using tt var in ranged loop
         - funlen # long functions, common in table-driven tests
-        - govet
+        - govet # fieldalignment on test structs
