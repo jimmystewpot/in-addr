@@ -113,8 +113,8 @@ func checkPrefixes(prefix netip.Prefix) ([]string, error) {
 		// IPv4 magic
 		return ipv4(networkAddress)
 	default:
+		return []string{}, fmt.Errorf("exception in checkPrefixes, bitsize not handled")
 	}
-	return []string{}, fmt.Errorf("exception in checkPrefixes, bitsize not handled")
 }
 
 // Run generates the in-addr syntax.
@@ -132,8 +132,6 @@ func (g *Generate) Run() error {
 
 		case 128:
 			withPrefix = fmt.Sprintf("%s/128", g.Subnet)
-		default:
-			return fmt.Errorf("subnet bitlength of %d is invalid", p.BitLen())
 		}
 		return fmt.Errorf(fatal(g.Subnet, "does not include a subnet mask, try", withPrefix))
 	}
