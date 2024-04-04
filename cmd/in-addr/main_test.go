@@ -124,7 +124,7 @@ func TestIpv4(t *testing.T) {
 	}
 }
 
-func Test_fatal(t *testing.T) {
+func TestFatal(t *testing.T) {
 	type args struct {
 		m []string
 	}
@@ -145,6 +145,74 @@ func Test_fatal(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := fatal(tt.args.m...); got != tt.want {
 				t.Errorf("fatal() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCheckPrefixes(t *testing.T) {
+	v4prefixOne, _ := netip.ParsePrefix("192.168.0.1/23")
+	v4prefixTwo, _ := netip.ParsePrefix("0.0.0.0")
+	v6prefixOne, _ := netip.ParsePrefix("2001:db8:abcd:1234::1/63")
+	v6prefixTwo, _ := netip.ParsePrefix("::.")
+
+	type args struct {
+		prefix netip.Prefix
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []string
+		wantErr bool
+	}{
+		{
+			name: "v4 prefix",
+			args: args{
+				prefix: v4prefixOne,
+			},
+			want: []string{
+				"0.168.192.in-addr.arpa.",
+				"1.168.192.in-addr.arpa.",
+			},
+			wantErr: false,
+		},
+		{
+			name: "v6 prefix",
+			args: args{
+				prefix: v6prefixOne,
+			},
+			want: []string{
+				"4.3.2.1.d.c.b.a.8.b.d.0.1.0.0.2.in-addr.arpa.",
+				"5.3.2.1.d.c.b.a.8.b.d.0.1.0.0.2.in-addr.arpa.",
+			},
+			wantErr: false,
+		},
+		{
+			name: "v4 0/0",
+			args: args{
+				prefix: v4prefixTwo,
+			},
+			want:    []string{},
+			wantErr: true,
+		},
+		{
+			name: "v6 0/0",
+			args: args{
+				prefix: v6prefixTwo,
+			},
+			want:    []string{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := checkPrefixes(tt.args.prefix)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("checkPrefixes() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("checkPrefixes() = %v, want %v", got, tt.want)
 			}
 		})
 	}

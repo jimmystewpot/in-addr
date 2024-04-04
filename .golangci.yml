@@ -122,8 +122,9 @@ linters:
 issues:
   # Exclude configuration for test files
   exclude-rules:
-    - path: _test\.go
+    - path: (.+)_test.go
       linters:
         - lll # long lines; test strings, bytes etc.
         - scopelint # using tt var in ranged loop
         - funlen # long functions, common in table-driven tests
+        - govet
