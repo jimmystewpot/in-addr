@@ -1,4 +1,4 @@
-module github.com/jimmystewpot/in-addr
+module in-addr
 
 go 1.22.1
 
