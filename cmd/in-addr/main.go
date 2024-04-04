@@ -11,9 +11,12 @@ import (
 )
 
 const (
+	// v4splitBits is the size of the subnet to split down to for IPv4
 	v4splitBits uint = 24
+	// v6splitBits is the size of the subnet to split down to for IPv6
 	v6splitBits uint = 64
-	v6Bytes     int  = 16
+	// v6Bytes is used to describe how many bytes an ipv6 address takes to store.
+	v6Bytes int = 16
 )
 
 var cli struct {
@@ -24,6 +27,7 @@ type Generate struct {
 	Subnet string `arg:"" help:"the subnet in cidr notation like 192.168.0.0/16 or 2001:db8:abcd:1234::1/64"`
 }
 
+// fatal logs to output an error.
 func fatal(m ...string) string {
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "[FATAL] ")
@@ -34,6 +38,7 @@ func fatal(m ...string) string {
 	return sb.String()
 }
 
+// ipv6 process IPv6 addresses into subnets, then reverse them.
 func ipv6(prefix netip.Prefix) ([]string, error) {
 	ipv6, err := netaddr.ParseIPv6Net(prefix.String())
 	if err != nil {
@@ -66,6 +71,7 @@ func ipv6(prefix netip.Prefix) ([]string, error) {
 	return results, nil
 }
 
+// ipv4 process IPv4 addresses into subnets, then reverse them.
 func ipv4(prefix netip.Prefix) ([]string, error) {
 	ipv4, err := netaddr.ParseIPv4Net(prefix.String())
 	if err != nil {
