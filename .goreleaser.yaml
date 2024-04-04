@@ -1,13 +1,15 @@
 report_sizes: true
 
+before:
+  hooks:
+    - go mod tidy
+
 gomod:
   proxy: true
-
+  mod: mod
   env:
     - GOPROXY=https://proxy.golang.org,direct
     - GOSUMDB=sum.golang.org
-
-  mod: mod
 
 builds:
   - id: "in-addr"
@@ -24,6 +26,8 @@ builds:
       - darwin
       - freebsd
       - linux
+      - netbsd
+      - openbsd
       - windows
     goarch:
       - amd64
@@ -31,14 +35,18 @@ builds:
       - arm64
       - 386
     goarm:
-      - 5
       - 6
       - 7
-    goamd64:
-      - v2
-      - v3
 
     mod_timestamp: "{{ .CommitTimestamp }}"
     skip: false
     no_unique_dist_dir: false
     no_main_check: true
+
+checksum:
+  name_template: '{{ .ArtifactName }}.{{ .Algorithm }}'
+  algorithm: sha256
+  split: true
+  disable: false
+  extra_files:
+    - glob: LICENSE
