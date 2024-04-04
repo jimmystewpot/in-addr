@@ -1,5 +1,7 @@
 # in-addr
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jimmystewpot_in-addr&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jimmystewpot_in-addr)
+
 A simple tool to take a subnet mask and print out the in-addr reverse order to stdout.
 
 This simplifies creating entire network ranges of files for DNS reverse lookup etc.
