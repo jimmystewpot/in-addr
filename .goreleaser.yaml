@@ -10,6 +10,7 @@ gomod:
   env:
     - GOPROXY=https://proxy.golang.org,direct
     - GOSUMDB=sum.golang.org
+    - GOPRIVATE=in-addr
 
 builds:
   - id: "in-addr"
