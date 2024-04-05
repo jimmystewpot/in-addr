@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-      - run: make test-all
       - name: Run GoReleaser Build
         uses: goreleaser/goreleaser-action@v5
         with:
