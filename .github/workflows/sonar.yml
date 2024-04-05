@@ -23,3 +23,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GORELEASER }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args:
+            -Dsonar.go.tests.reportPaths=ci/testreport.json
+            -Dsonar.go.coverage.reportPaths=ci/coverage.txt
+            -Dsonar.go.golint.reportPaths=ci/checkstyle-lint.xml
+            -Dsonar.projectKey=jimmystewpot_in-addr
+            -Dsonar.organization=jimmystewpot
