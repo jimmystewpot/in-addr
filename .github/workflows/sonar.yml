@@ -25,8 +25,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args:
+            -Dsonar.projectKey=jimmystewpot_in-addr
+            -Dsonar.organization=jimmystewpot
+            -Dsonar.sources=.
             -Dsonar.go.tests.reportPaths=ci/testreport.json
             -Dsonar.go.coverage.reportPaths=ci/coverage.txt
             -Dsonar.go.golint.reportPaths=ci/checkstyle-lint.xml
-            -Dsonar.projectKey=jimmystewpot_in-addr
-            -Dsonar.organization=jimmystewpot
+            -Dsonar.tests=.
+            -Dsonar.test.inclusions=**/*_test.go
+            -Dsonar.exclusions=**/*_test.go

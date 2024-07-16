@@ -120,6 +120,26 @@ func checkPrefixes(prefix netip.Prefix) ([]string, error) {
 // Run generates the in-addr syntax.
 func (g *Generate) Run() error {
 	// check if the input is a subnet, if it is an IP we append the subnet mask.
+	err := g.subnet()
+	if err != nil {
+		return err
+	}
+	prefix, err := netip.ParsePrefix(g.Subnet)
+	if err != nil {
+		return fmt.Errorf(fatal(err.Error()))
+	}
+	results, err := checkPrefixes(prefix)
+	if err != nil {
+		return err
+	}
+	for idx := 0; idx < len(results); idx++ {
+		fmt.Println(results[idx])
+	}
+	return nil
+}
+
+// return an error if the subnet is not well formed.
+func (g *Generate) subnet() error {
 	if !strings.Contains(g.Subnet, "/") {
 		p, err := netip.ParseAddr(g.Subnet)
 		if err != nil {
@@ -134,17 +154,6 @@ func (g *Generate) Run() error {
 			withPrefix = fmt.Sprintf("%s/128", g.Subnet)
 		}
 		return fmt.Errorf(fatal(g.Subnet, "does not include a subnet mask, try", withPrefix))
-	}
-	prefix, err := netip.ParsePrefix(g.Subnet)
-	if err != nil {
-		return fmt.Errorf(fatal(err.Error()))
-	}
-	results, err := checkPrefixes(prefix)
-	if err != nil {
-		return err
-	}
-	for idx := 0; idx < len(results); idx++ {
-		fmt.Println(results[idx])
 	}
 	return nil
 }
