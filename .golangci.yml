@@ -30,10 +30,17 @@ linters-settings:
     local-prefixes: github.com/golangci/golangci-lint
   golint:
     min-confidence: 0
-  gomnd:
-    checks: argument,case,condition,return
   govet:
     disable-all: true
+    # Enable analyzers by name.
+    # (in addition to default:
+    #   appends, asmdecl, assign, atomic, bools, buildtag, cgocall, composites, copylocks, defers, directive, errorsas,
+    #   framepointer, httpresponse, ifaceassert, loopclosure, lostcancel, nilfunc, printf, shift, sigchanyzer, slog,
+    #   stdmethods, stringintconv, structtag, testinggoroutine, tests, timeformat, unmarshal, unreachable, unsafeptr,
+    #   unusedresult
+    # ).
+    # Run `GL_DEBUG=govet golangci-lint run --enable=govet` to see default, all available analyzers, and enabled analyzers.
+    # Default: []
     enable:
       - appends
       - asmdecl
@@ -78,7 +85,7 @@ linters-settings:
   lll:
     line-length: 160
   misspell:
-    locale: UK
+    locale: US, UK
   nolintlint:
     allow-unused: false # report any unused nolint directives
     require-explanation: false # don't require an explanation for nolint directives
@@ -90,10 +97,12 @@ linters:
     - bodyclose
     - dogsled
     - dupl
-    - exportloopref
+    - copyloopvar
     - errcheck
     - funlen
     - goconst
+    - gosmopolitan
+    - gocritic
     - gocyclo
     - gofmt
     - goimports
@@ -104,6 +113,7 @@ linters:
     - ineffassign
     - lll
     - misspell
+    - mnd
     - nakedret
     - nolintlint
     - rowserrcheck
@@ -119,9 +129,13 @@ linters:
 issues:
   # Exclude configuration for test files
   exclude-rules:
-    - path: (.+)_test.go
+    - path: _test\.go
       linters:
+        - gomnd # magic numbers
+        - govet # we don't care about align and other problems in test files usually.
         - lll # long lines; test strings, bytes etc.
+        - mnd # magic numbers
         - scopelint # using tt var in ranged loop
         - funlen # long functions, common in table-driven tests
-        - govet # fieldalignment on test structs
+        - dupl # duplicate code detection
+
