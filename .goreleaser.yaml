@@ -1,3 +1,4 @@
+version: 2
 report_sizes: true
 
 before:
@@ -30,14 +31,28 @@ builds:
       - netbsd
       - openbsd
       - windows
+
     goarch:
       - amd64
       - arm
       - arm64
-      - 386
+
     goarm:
       - 6
       - 7
+
+    goamd64:
+      - v2
+      - v3
+
+    ignore:
+      - goos: darwin
+        goarch: arm
+        goarm: 6
+      - goos: darwin
+        goarch: arm
+        goarm: 7
+
 
     mod_timestamp: "{{ .CommitTimestamp }}"
     skip: false
