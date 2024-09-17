@@ -12,7 +12,7 @@ deps:
 	@echo ""
 	@echo "***** Installing dependencies for ${TOOL} *****"
 	go clean --cache
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.2
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.0
 
 lint: deps reportdir
 	@echo ""

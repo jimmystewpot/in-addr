@@ -16,7 +16,9 @@ const (
 	// v6splitBits is the size of the subnet to split down to for IPv6
 	v6splitBits uint = 64
 	// v6Bytes is used to describe how many bytes an ipv6 address takes to store.
-	v6Bytes int = 16
+	v6Bytes      int = 16
+	v4SubnetSize int = 32
+	v6SubnetSize int = 128
 )
 
 var cli struct {
@@ -39,6 +41,8 @@ func fatal(m ...string) string {
 }
 
 // ipv6 process IPv6 addresses into subnets, then reverse them.
+//
+//nolint:mnd // not an mnd
 func ipv6(prefix netip.Prefix) ([]string, error) {
 	ipv6, err := netaddr.ParseIPv6Net(prefix.String())
 	if err != nil {
@@ -93,6 +97,7 @@ func ipv4(prefix netip.Prefix) ([]string, error) {
 	// using the slice of subnets we need to reverse the network addresses and print them to stdout.
 	for idx := 0; idx < len(ips); idx++ {
 		var reversed strings.Builder
+		//nolint:mnd // not an mnd
 		for segment := len(ips[idx].As4()) - 2; segment >= 0; segment-- {
 			fmt.Fprintf(&reversed, "%d.", ips[idx].As4()[segment])
 		}
@@ -106,10 +111,10 @@ func ipv4(prefix netip.Prefix) ([]string, error) {
 func checkPrefixes(prefix netip.Prefix) ([]string, error) {
 	networkAddress := prefix.Masked()
 	switch prefix.Addr().BitLen() {
-	case 128:
+	case v6SubnetSize:
 		// IPv6 magic
 		return ipv6(networkAddress)
-	case 32:
+	case v4SubnetSize:
 		// IPv4 magic
 		return ipv4(networkAddress)
 	default:
@@ -126,7 +131,7 @@ func (g *Generate) Run() error {
 	}
 	prefix, err := netip.ParsePrefix(g.Subnet)
 	if err != nil {
-		return fmt.Errorf(fatal(err.Error()))
+		return fmt.Errorf("%s", fatal(err.Error()))
 	}
 	results, err := checkPrefixes(prefix)
 	if err != nil {
@@ -143,17 +148,16 @@ func (g *Generate) subnet() error {
 	if !strings.Contains(g.Subnet, "/") {
 		p, err := netip.ParseAddr(g.Subnet)
 		if err != nil {
-			return fmt.Errorf(fatal(g.Subnet, "invalid input, does not match IP Address or Prefix"))
+			return fmt.Errorf("%s", fatal(g.Subnet, "invalid input, does not match IP Address or Prefix"))
 		}
 		var withPrefix string
 		switch p.BitLen() {
-		case 32:
-			withPrefix = fmt.Sprintf("%s/32", g.Subnet)
-
-		case 128:
+		case v6SubnetSize:
 			withPrefix = fmt.Sprintf("%s/128", g.Subnet)
+		case v4SubnetSize:
+			withPrefix = fmt.Sprintf("%s/32", g.Subnet)
 		}
-		return fmt.Errorf(fatal(g.Subnet, "does not include a subnet mask, try", withPrefix))
+		return fmt.Errorf("%s", fatal(g.Subnet, "does not include a subnet mask, try", withPrefix))
 	}
 	return nil
 }
