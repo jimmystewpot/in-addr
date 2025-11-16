@@ -19,7 +19,7 @@ jobs:
           go-version: stable
       - run: make test-all
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@fd88b7d
         env:
           GITHUB_TOKEN: ${{ secrets.GORELEASER }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
